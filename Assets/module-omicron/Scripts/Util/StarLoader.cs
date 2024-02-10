@@ -66,17 +66,6 @@ public class StarLoader : MonoBehaviour
         // Instantiate the stars as invisible and set velocity
         if (spawnedStar != null)
         {
-            // Set the velocity of the star
-            Rigidbody objectRigidbody = spawnedStar.GetComponent<Rigidbody>();
-            if (objectRigidbody != null)
-            {
-                //objectRigidbody.velocity = starVelocity;
-
-                // Disable the rigidbody for now //////////////////////////////////////////
-                Destroy(objectRigidbody);
-
-                //objectRigidbody.isKinematic = true;
-            }
             // if the Star does not have a hipparcos ID, then it is not visible
             if (hip == 0)
             {
@@ -89,24 +78,21 @@ public class StarLoader : MonoBehaviour
                 spawnedStar.name = "Star_" + counter;
                 // Set the layer of the star. This is used to determine if the star is visible or not
                 spawnedStar.layer = 10;
+                spawnedStar.tag = "HipUnavailable";
             }
             else
             {
                 // Enable the renderer and disable the collider
-                Renderer objectRenderer = spawnedStar.GetComponent<Renderer>();
+                /*Renderer objectRenderer = spawnedStar.GetComponent<Renderer>();
                 if (objectRenderer != null)
                 {
                     objectRenderer.enabled = true;
-                }
-                Collider objectCollider = spawnedStar.GetComponent<Collider>();
-                if (objectCollider != null)
-                {
-                    objectCollider.enabled = false;
-                }
+                }*/
                 // Set the hip ID of the star
                 spawnedStar.name = hip.ToString();
                 // Set the layer of the start to be always visible
                 spawnedStar.layer = 9;
+                spawnedStar.tag = "HipAvailable";
             }
             //Debug.Log("Printing all the star data:"+hip+","+mag+","+absmag+","+dist);
         }
@@ -118,16 +104,6 @@ public class StarLoader : MonoBehaviour
             spawnedStar.tag = "TheSun";
             spawnedStar.name = "TheSun";
             //The sun is always visible and static
-            Rigidbody objectRigidbody = spawnedStar.GetComponent<Rigidbody>();
-            if (objectRigidbody != null)
-            {
-                objectRigidbody.isKinematic = true;
-            }
-            Collider objectCollider = spawnedStar.GetComponent<Collider>();
-            if (objectCollider != null)
-            {
-                objectCollider.enabled = false;
-            }
             Renderer objectRenderer = spawnedStar.GetComponent<Renderer>();
             if (objectRenderer != null)
             {
@@ -201,10 +177,100 @@ public class StarLoader : MonoBehaviour
         yield return null;
     }
 
+    /// <summary>
+    /// ///////////////////////////////////////////////////////////////////////
+    
+    IEnumerator LoadConstellations()
+    {
+        string csvPath = Path.Combine(Application.streamingAssetsPath, "constellationship.fab");
+
+        if (File.Exists(csvPath))
+        {
+            using (StreamReader reader = new StreamReader(csvPath))
+            {
+                while (!reader.EndOfStream)
+                {
+                    string line = reader.ReadLine();
+                    // Split the line by spaces and then filter out any empty entries manually
+                    string[] values = line.Split(new char[] { ' ' });
+                    List<string> filteredValues = new List<string>();
+                    foreach (var value in values)
+                    {
+                        if (!string.IsNullOrEmpty(value))
+                        {
+                            filteredValues.Add(value);
+                        }
+                    }
+
+                    if (filteredValues.Count < 2) // Ensure there's at least a name and a pair count
+                    {
+                        Debug.LogError("Invalid line format.");
+                        continue;
+                    }
+
+                    string constellationName = filteredValues[0];
+                    int numPairs;
+                    if (int.TryParse(filteredValues[1], out numPairs))
+                    {
+                        int[,] starHips = new int[numPairs, 2];
+                        for (int i = 0; i < numPairs; i++)
+                        {
+                            int indexOffset = 2 * i + 2; // Calculate the correct index offset for the pair
+                            if (indexOffset + 1 < filteredValues.Count) // Ensure the indices are within bounds
+                            {
+                                if (int.TryParse(filteredValues[indexOffset], out int firstValue) && 
+                                    int.TryParse(filteredValues[indexOffset + 1], out int secondValue))
+                                {
+                                    starHips[i, 0] = firstValue;
+                                    starHips[i, 1] = secondValue;
+                                }
+                                else
+                                {
+                                    Debug.Log($"Failed to parse pair at index {i}");
+                                }
+                            }
+                        }
+
+                        Debug.Log($"Constellation: {constellationName} has {numPairs} pairs of stars.");
+
+                        ConstellationRender drawer = FindObjectOfType<ConstellationRender>();
+
+                        // Check if the drawer is found
+                        if (drawer != null)
+                        {
+                            // Call DrawConstellation with the parsed data
+                            drawer.DrawConstellation(starHips);
+                        }
+                        else
+                        {
+                            Debug.LogError("ConstellationDrawer component not found in the scene.");
+                        }
+
+                    }
+                    else
+                    {
+                        Debug.Log("Failed to parse the number of pairs.");
+                    }
+                }
+            }
+        }
+        else
+        {
+            Debug.LogError($"File not found at path: {csvPath}");
+        }
+
+        yield return null;
+    }
+
+
+
+    //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
     // Start is called before the first frame update
     void Start()
     {
         StartCoroutine(LoadStars());
+        StartCoroutine(LoadConstellations());
     }
 
     // Update is called once per frame
