@@ -23,17 +23,17 @@ CAVE2 is a trademark of the University of Illinois Board of Trustees
 
 # Space Exploration project Spring 2024
 
-## Assets
+# Assets
 This folder contains all the data files and the scenes. There are 3 sub folders:
 
-# DataFiles
+## DataFiles
 This folder contains the downloaded datafiles as well as the script used to convert the csv into usable formats.
 
-# StreamingAssets
+## StreamingAssets
 This folder contains the converted data file to be bundled in the app build.
 
-# module-omicron
+## module-omicron
 This is the main chunk of the app. It contains all the prefabs and the scripts. All the objects used in the application are present according to folder names.
 
-## Build
+# Build
 This folder contains the builds done on my system to test the app. This is not important to run on another system. It needs to be rebuilt.
