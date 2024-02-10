@@ -11,8 +11,7 @@ GameObject:
   - component: {fileID: 3991717082164033483}
   - component: {fileID: 6431892596870497250}
   - component: {fileID: 2412637421772100536}
-  - component: {fileID: 2046093078004731885}
-  - component: {fileID: 3550844504245424534}
+  - component: {fileID: 4326373055593213365}
   m_Layer: 0
   m_Name: M_Star
   m_TagString: Untagged
@@ -80,32 +79,15 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!65 &2046093078004731885
-BoxCollider:
+--- !u!114 &4326373055593213365
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5918187692464202827}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 1
   m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
---- !u!54 &3550844504245424534
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5918187692464202827}
-  serializedVersion: 2
-  m_Mass: 0.0000001
-  m_Drag: 0
-  m_AngularDrag: 0
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 112
-  m_CollisionDetection: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: caa5bcf81fba00c4d8071c43d272ed33, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 

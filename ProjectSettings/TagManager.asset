@@ -6,6 +6,9 @@ TagManager:
   tags:
   - FlockingLeader
   - TheSun
+  - Cube
+  - HipAvailable
+  - HipUnavailable
   layers:
   - Default
   - TransparentFX
