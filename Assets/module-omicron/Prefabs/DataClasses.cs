@@ -4,17 +4,7 @@ using UnityEngine;
 
 public class DataClasses : MonoBehaviour
 {
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+    // This class is a placeholder for all the data classes used in the project
 }
 
 [CreateAssetMenu(fileName = "NewStarData", menuName = "StarData")]

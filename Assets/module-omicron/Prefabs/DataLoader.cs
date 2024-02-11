@@ -12,6 +12,9 @@ public class DataLoader : MonoBehaviour
     private string constellationPath = "constellationship.fab";
 
     public List<StarData> AllStars = new List<StarData>();
+    public List<ConstellationData> AllConstellations = new List<ConstellationData>();
+
+    public Dictionary<float, Vector3> starPositions;
 
     IEnumerator LoadStarData()
     {
@@ -25,9 +28,10 @@ public class DataLoader : MonoBehaviour
     IEnumerator LoadConstellationData()
     {
         string data = Path.Combine(Application.streamingAssetsPath, constellationPath);
-        
         ParseConstellationData(data);
-        
+        // setConstellationColor();
+        ConstellationSystem constellationSystem = FindObjectOfType<ConstellationSystem>();
+        constellationSystem.setupConstellations(); 
         yield return null;
     }
 
@@ -56,6 +60,8 @@ public class DataLoader : MonoBehaviour
                     }
                     constellationData.starPairs = starPairs;
 
+                    AllConstellations.Add(constellationData);
+
                     // constellationData.logConstellationData();
                 }
                 catch (Exception e)
@@ -71,6 +77,12 @@ public class DataLoader : MonoBehaviour
     void ParseStarData(string data)
     {
         CultureInfo culture = new CultureInfo("en-US");
+
+        // Save star positions for efficient lookups
+        if (starPositions == null)
+        {
+            starPositions = new Dictionary<float, Vector3>();
+        }
         
         using (StreamReader reader = new StreamReader(data))
         {
@@ -115,12 +127,22 @@ public class DataLoader : MonoBehaviour
                 
                 // Save star data
                 AllStars.Add(starData);
+
+                // Save star positions for efficient lookups if hip exists and is not already in the dictionary and is not zero
+                if (starData.hip != 0.0 && !starPositions.ContainsKey(starData.hip))
+                {
+                    starPositions.Add(starData.hip, starData.pos);
+                }else if (starData.hip == 0.0)
+                {
+                    // Debug.Log("Error adding star position to dictionary: hip is zero");
+                }
+                else if (starPositions.ContainsKey(starData.hip))
+                {
+                    Debug.LogError("Error adding star position to dictionary: hip already exists");
+                }
+
             }
         }
-        
-        //
-
-        // Here you would save the starData instance, for example, adding it to a list
     }
 
     // Start is called before the first frame update

@@ -4,34 +4,67 @@ using UnityEngine;
 
 public class StarParticleSystem : MonoBehaviour
 {
-
     public ParticleSystem particleSystem;
+    DataLoader dataLoader;
     public void setupParticleSystem()
     {
-        DataLoader dataLoader = FindObjectOfType<DataLoader>();
+        dataLoader = FindObjectOfType<DataLoader>();
         // Debug.Log(dataLoader.AllStars.Count);
         ParticleSystem.Particle[] particles = new ParticleSystem.Particle[dataLoader.AllStars.Count];
         for (int i = 0; i < dataLoader.AllStars.Count; i++)
         {
             Vector3 starPosition = dataLoader.AllStars[i].pos;
-            float starSize = CalculateSizeBasedOnMagnitude(dataLoader.AllStars[i].mag);
-
             particles[i].position = starPosition;
-            particles[i].startSize = starSize;
-            particles[i].startColor = DetermineColorBasedOnSpect(dataLoader.AllStars[i].spect);
+            particles[i].startSize = CalculateSize(dataLoader.AllStars[i].spect);
+            particles[i].startColor = CalculateColor(dataLoader.AllStars[i].spect);
         }
+        // Component.particleSystem.SetParticles(particles, particles.Length);
         particleSystem.SetParticles(particles, particles.Length);
     }
 
-    float CalculateSizeBasedOnMagnitude(float magnitude)
+    private Color CalculateColor(string spect)
     {
-        // Adjust this calculation as needed
-        return Mathf.Max(0.1f, 1.0f - (magnitude / 10.0f));
+        switch (spect)
+        {
+            case "O":
+                return Color.blue;
+            case "B":
+                return Color.cyan;
+            case "A":
+                return Color.grey;
+            case "F":
+                return Color.white;
+            case "G":
+                return Color.yellow;
+            case "K":
+                return Color.magenta;
+            case "M":
+                return Color.red;
+            default:
+                return Color.yellow;
+        } 
     }
 
-    Color DetermineColorBasedOnSpect(string spect)
+    private float CalculateSize(string spect)
     {
-        // Example method: adjust this to set the color based on the spectral type or other criteria
-        return Color.white; // Default to white for now
+        switch (spect)
+        {
+            case "O":
+                return 1.32f;
+            case "B":
+                return 0.84f;
+            case "A":
+                return 0.32f;
+            case "F":
+                return 0.25f;
+            case "G":
+                return 0.2f;
+            case "K":
+                return 0.16f;
+            case "M":
+                return 0.14f;
+            default:
+                return 0.16f;
+        }
     }
 }
