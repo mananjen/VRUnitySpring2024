@@ -56,6 +56,15 @@ public class ConstellationData : ScriptableObject
         this.numPairs = numPairs;
         this.starPairs = starPairs;
     }
+
+    public void logConstellationData() 
+    {
+        Debug.Log(this.ID + " " + this.numPairs);
+        foreach (StarPair pair in this.starPairs)
+        {
+            Debug.Log(pair);
+        }
+    }
 }
 
 public struct StarPair
@@ -67,5 +76,10 @@ public struct StarPair
     {
         this.star1 = star1;
         this.star2 = star2;
+    }
+
+    public override string ToString()
+    {
+        return $"({star1}, {star2})";
     }
 }

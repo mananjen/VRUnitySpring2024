@@ -2,25 +2,76 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
+using System;
 using System.Globalization;
 
 public class DataLoader : MonoBehaviour
 {
     
     private string starPath = "selected_with_velocities.csv";
+    private string constellationPath = "constellationship.fab";
+
+    public List<StarData> AllStars = new List<StarData>();
 
     IEnumerator LoadStarData()
     {
         string data = Path.Combine(Application.streamingAssetsPath, starPath);
-        
         ParseStarData(data);
+        StarParticleSystem starSystem = FindObjectOfType<StarParticleSystem>();
+        starSystem.setupParticleSystem();
+        yield return null;
+    }
+
+    IEnumerator LoadConstellationData()
+    {
+        string data = Path.Combine(Application.streamingAssetsPath, constellationPath);
+        
+        ParseConstellationData(data);
         
         yield return null;
+    }
+
+    void ParseConstellationData(string data)
+    {
+        CultureInfo culture = new CultureInfo("en-US");
+        using (StreamReader reader = new StreamReader(data))
+        {
+            while (!reader.EndOfStream)
+            {
+                string line = reader.ReadLine();
+                // Debug.Log($"Processing line: {line}");
+                string[] values = line.Split(new char[] {' '}, System.StringSplitOptions.RemoveEmptyEntries);
+                // Debug.Log($"Values: {values}");
+                ConstellationData constellationData = ScriptableObject.CreateInstance<ConstellationData>();
+                try{
+                    constellationData.ID = values[0];
+                    int.TryParse(values[1], NumberStyles.Integer, culture, out constellationData.numPairs);
+                    List<StarPair> starPairs = new List<StarPair>();
+                    for (int i = 2; i < values.Length; i += 2)
+                    {
+                        StarPair starPair = new StarPair();
+                        int.TryParse(values[i], NumberStyles.Integer, culture, out starPair.star1);
+                        int.TryParse(values[i + 1], NumberStyles.Integer, culture, out starPair.star2);
+                        starPairs.Add(starPair);
+                    }
+                    constellationData.starPairs = starPairs;
+
+                    // constellationData.logConstellationData();
+                }
+                catch (Exception e)
+                {
+                    Debug.LogError("Error parsing constellation data: " + e.Message);
+                }
+
+                // Parse constellation data
+            }
+        }
     }
 
     void ParseStarData(string data)
     {
         CultureInfo culture = new CultureInfo("en-US");
+        
         using (StreamReader reader = new StreamReader(data))
         {
             while (!reader.EndOfStream)
@@ -61,13 +112,13 @@ public class DataLoader : MonoBehaviour
 
                 // log star info
                 // Debug.Log(starData.id + " " + starData.hip + " " + starData.dist + " " + starData.pos + " " + starData.absMag + " " + starData.mag + " " + starData.vel + " " + starData.spect);
-
-                // Spawn star
-
+                
                 // Save star data
+                AllStars.Add(starData);
             }
         }
         
+        //
 
         // Here you would save the starData instance, for example, adding it to a list
     }
@@ -76,6 +127,7 @@ public class DataLoader : MonoBehaviour
     void Start()
     {
         StartCoroutine(LoadStarData());
+        StartCoroutine(LoadConstellationData());
     }
 
     // Update is called once per frame
