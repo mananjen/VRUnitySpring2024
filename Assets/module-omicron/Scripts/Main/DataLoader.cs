@@ -45,7 +45,12 @@ public class DataLoader : MonoBehaviour
                 string line = reader.ReadLine();
                 // Debug.Log($"Processing line: {line}");
                 string[] values = line.Split(new char[] {' '}, System.StringSplitOptions.RemoveEmptyEntries);
-                // Debug.Log($"Values: {values}");
+                // Debug.Log($"Values: {string.Join(", ", values)}");
+                if (values.Length < 3) 
+                {
+                    // Debug.LogWarning("Skipping line due to insufficient data.");
+                    continue;
+                }
                 ConstellationData constellationData = ScriptableObject.CreateInstance<ConstellationData>();
                 try{
                     constellationData.ID = values[0];
@@ -68,8 +73,6 @@ public class DataLoader : MonoBehaviour
                 {
                     Debug.LogError("Error parsing constellation data: " + e.Message);
                 }
-
-                // Parse constellation data
             }
         }
     }
