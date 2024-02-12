@@ -21,19 +21,22 @@ Alternatively when available, you can use one of the zipped release files.
 
 CAVE2 is a trademark of the University of Illinois Board of Trustees
 
-# Space Exploration project Spring 2024
+# Space Explorer - Spring 2024 Project
 
-# Assets
-This folder contains all the data files and the scenes. There are 3 sub folders:
+## Assets
+This folder contains all the necessary data files and the scenes for the application to build successfully. There are 4 sub folders:
 
-## DataFiles
-This folder contains the downloaded datafiles as well as the script used to convert the csv into usable formats.
+### DataFiles
+This folder contains the downloaded datafiles as well as the python script used to convert the csv into usable formats. Main operations performed include removing of non usable data as well as converting the velocity vectors of stars from km/s to pc/year.
 
-## StreamingAssets
-This folder contains the converted data file to be bundled in the app build.
+### StreamingAssets
+This folder contains the converted data file to be bundled in the app build. Without this folder, none of the data will be found and the application will run with an empty sky.
 
-## module-omicron
-This is the main chunk of the app. It contains all the prefabs and the scripts. All the objects used in the application are present according to folder names.
+### module-omicron
+This is the main chunk of the app. It contains all the prefabs and the scripts. All the objects used in the application development are present according to folder names. This folder is mainly for the development of the app, not for the final build.
+
+### Resources
+This Folder houses the materials and shaders that will be used for the visual purposes.
 
 # Build
 This folder contains the builds done on my system to test the app. This is not important to run on another system. It needs to be rebuilt.
