@@ -4,56 +4,69 @@ using UnityEngine;
 
 public class ConstellationSystem : MonoBehaviour
 {
-    // public GameObject lineRendererPrefab;
-    
-    DataLoader dataLoader;
+    private Material[] materials;
 
-    public void setupConstellations()
+    void Awake()
     {
-        // Debug.Log("Setting up constellations");
-        dataLoader = FindObjectOfType<DataLoader>();
-        Material lineMat1 = Resources.Load<Material>("Line_Mat1");
-        Material lineMat2 = Resources.Load<Material>("Line_Mat2");
-        Material lineMat3 = Resources.Load<Material>("Line_Mat3");
-        Material lineMat4 = Resources.Load<Material>("Line_Mat4");
-        Material lineMat5 = Resources.Load<Material>("Line_Mat5");
-        Material[] materials = {lineMat1, lineMat2, lineMat3, lineMat4, lineMat5};
-        // starPositions = dataLoader.starPositions;
-        // dataLoader.AllConstellations;
-        // RenderConstellations();
-        foreach (var constellation in dataLoader.AllConstellations)
+        LoadMaterials();
+    }
+
+    private void LoadMaterials()
+    {
+        materials = new Material[5];
+        for (int i = 0; i < materials.Length; i++)
         {
-            GameObject constellationObj = new GameObject(constellation.ID);
-            // Set the parent of the constellation object to the current object
-            constellationObj.transform.SetParent(transform, false);
-
-            // Assign a random material to the constellation
-            int randomIndex = Random.Range(0, materials.Length);
-            Material lineMat = materials[randomIndex];
-
-            foreach (var pair in constellation.starPairs)
+            string materialPath = $"Line_Mat{i + 1}";
+            materials[i] = Resources.Load<Material>(materialPath);
+            if(materials[i] == null)
             {
-                if (dataLoader.starPositions.TryGetValue(pair.star1, out Vector3 startPos) && dataLoader.starPositions.TryGetValue(pair.star2, out Vector3 endPos))
-                {
-                    DrawLineBetweenStars(startPos, endPos, constellationObj, lineMat);
-                }
+                Debug.LogError($"Failed to load material at path: {materialPath}");
             }
         }
     }
 
-    bool DrawLineBetweenStars(Vector3 startPos, Vector3 endPos, GameObject constellationObj, Material lineMat)
+    public bool initialize(List<ConstellationData> constellations, Dictionary<float, Vector3> starPositions)
     {
-        try
+        if(constellations == null)
         {
-            GameObject lineRendererObj = new GameObject("LineRenderer");
-            lineRendererObj.transform.SetParent(constellationObj.transform, false);
-            LineRenderer lineRenderer = lineRendererObj.AddComponent<LineRenderer>();
-            lineRenderer.positionCount = 2;
-            lineRenderer.startWidth = 0.1f;
-            lineRenderer.endWidth = 0.1f;
-            lineRenderer.SetPosition(0, startPos);
-            lineRenderer.SetPosition(1, endPos);
-            lineRenderer.material = lineMat;
+            Debug.LogError("No Constellations Found");
+            return false;
+        }
+        if(starPositions == null)
+        {
+            Debug.LogError("No Star Positions Found");
+            return false;
+        }
+        return setupConstellations(constellations, starPositions);
+    }
+
+    private bool setupConstellations(List<ConstellationData> constellations, Dictionary<float, Vector3> starPositions)
+    {
+        try {
+            foreach (var constellation in constellations)
+            {
+                GameObject constellationObj = new GameObject(constellation.ID);
+                // Set the parent of the constellation object to the current object
+                constellationObj.transform.SetParent(transform, false);
+
+                Material lineMat = GetRandomMaterial();
+
+                foreach (var pair in constellation.starPairs)
+                {
+                    if (starPositions.TryGetValue(pair.star1, out Vector3 startPos) && starPositions.TryGetValue(pair.star2, out Vector3 endPos))
+                    {
+                        if (DrawLineBetweenStars(startPos, endPos, constellationObj, lineMat))
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            Debug.LogError("Error Drawing Line Between Stars");
+                            return false;
+                        }
+                    }
+                }
+            }
             return true;
         }
         catch (System.Exception e)
@@ -61,5 +74,35 @@ public class ConstellationSystem : MonoBehaviour
             Debug.Log(e);
             return false;
         }
+    }
+
+    private Material GetRandomMaterial()
+    {
+        int randomIndex = Random.Range(0, materials.Length);
+        return materials[randomIndex];
+    }
+
+    private bool DrawLineBetweenStars(Vector3 startPos, Vector3 endPos, GameObject constellationObj, Material lineMat)
+    {
+        GameObject lineRendererObj = GetPooledLineRendererObject() ?? new GameObject("LineRenderer");
+        lineRendererObj.transform.SetParent(constellationObj.transform, false);
+        LineRenderer lineRenderer = lineRendererObj.GetComponent<LineRenderer>();
+        if (lineRenderer == null)
+        {
+            lineRenderer = lineRendererObj.AddComponent<LineRenderer>();
+        }
+        lineRenderer.positionCount = 2;
+        lineRenderer.SetPosition(0, startPos);
+        lineRenderer.SetPosition(1, endPos);
+        lineRenderer.material = lineMat;
+        LineRendererSettings.Configure(lineRenderer);
+        return true;
+    }
+
+    private GameObject GetPooledLineRendererObject()
+    {
+        // Implement object pooling logic here
+        // Return an inactive pooled LineRenderer GameObject or null if none are available
+        return null;
     }
 }

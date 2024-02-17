@@ -11,6 +11,9 @@ public class DataLoader : MonoBehaviour
     private string starPath = "selected_with_velocities.csv";
     private string constellationPath = "constellationship.fab";
 
+    public GameObject starPrefab;
+    public GameObject constellationPrefab;
+
     public List<StarData> AllStars = new List<StarData>();
     public List<ConstellationData> AllConstellations = new List<ConstellationData>();
 
@@ -20,8 +23,11 @@ public class DataLoader : MonoBehaviour
     {
         string data = Path.Combine(Application.streamingAssetsPath, starPath);
         ParseStarData(data);
-        StarParticleSystem starSystem = FindObjectOfType<StarParticleSystem>();
-        starSystem.setupParticleSystem();
+        // Instantiate star particle system using prefab
+        GameObject starSystem = Instantiate(starPrefab);
+        starSystem.name = "AllStars";
+        StarParticleSystem starParticleSystem = starSystem.GetComponent<StarParticleSystem>();
+        starParticleSystem.initialize(AllStars);
         yield return null;
     }
 
@@ -29,9 +35,11 @@ public class DataLoader : MonoBehaviour
     {
         string data = Path.Combine(Application.streamingAssetsPath, constellationPath);
         ParseConstellationData(data);
-        // setConstellationColor();
-        ConstellationSystem constellationSystem = FindObjectOfType<ConstellationSystem>();
-        constellationSystem.setupConstellations(); 
+        // Instantiate constellation system using prefab
+        GameObject constellation = Instantiate(constellationPrefab);
+        constellation.name = "ModernConstellations";
+        ConstellationSystem constellationSystem = constellation.GetComponent<ConstellationSystem>();
+        constellationSystem.initialize(AllConstellations, starPositions); 
         yield return null;
     }
 
