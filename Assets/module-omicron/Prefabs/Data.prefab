@@ -118,3 +118,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d4ab5765fa67a9c43afee1c611f601c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  starPrefab: {fileID: 4653837481063831687, guid: b643dd6319b135d44b17684ce5edc0fc,
+    type: 3}
+  constellationPrefab: {fileID: 4732660890294460940, guid: 4d573c15cfdfac44f82d9ee9bd67e53d,
+    type: 3}
+  AllStars: []
+  AllConstellations: []

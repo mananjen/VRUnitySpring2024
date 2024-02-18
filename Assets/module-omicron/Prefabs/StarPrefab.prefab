@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 6518880166066475692}
   - component: {fileID: 2421293610211546085}
   m_Layer: 0
-  m_Name: Stars
+  m_Name: StarPrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4766,4 +4766,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 07c809bc2009ab645b4287d66dcd8f82, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  particleSystem: {fileID: 7704039514638689188}
+  O_Color: {r: 0, g: 0.2045677, b: 0.9716981, a: 1}
+  B_Color: {r: 0, g: 0.6528573, b: 1, a: 1}
+  A_Color: {r: 0.5225169, g: 0.61235315, b: 0.9716981, a: 1}
+  F_Color: {r: 0.7022072, g: 0.70087224, b: 0.7075472, a: 1}
+  G_Color: {r: 1, g: 0.9931487, b: 0, a: 1}
+  K_Color: {r: 1, g: 0.5792652, b: 0, a: 1}
+  M_Color: {r: 1, g: 0.25555488, b: 0, a: 1}
